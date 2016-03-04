@@ -1,0 +1,17 @@
+* Setup
+  We are working with the data with the help of python and the *pandas* library.
+
+#+BEGIN_SRC python -n :results value :session icews
+import numpy
+import pandas
+
+#open tab delimited csv into dataframe
+
+#+END_SRC
+* CAMEO Score aggregation
+  We would like to aggregate the CAMEO scores of all data per some time unit into a single 
+new one to give us our time series. The existing literature indentifies four ways to do that.
+** Goldstein mean
+** Goldstein sum
+** Goldstein counts (positive and negative)
+** Duvall and Thompson counts

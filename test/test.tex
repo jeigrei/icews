@@ -1,0 +1,55 @@
+% Created 2016-03-02 Wed 22:46
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\date{\today}
+\title{test}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 24.5.1 (Org mode 8.2.10)}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Code block one}
+\label{sec-1}
+Here we have some code
+\begin{verbatim}
+1  x = 15
+2  y = 3
+3  
+4  if y < x:
+5      x = x + y
+6      return x
+\end{verbatim}
+
+\section{Code block two}
+\label{sec-2}
+Down here, we have even more code, but this time we will return an array.
+\begin{verbatim}
+1  import os
+2  import re
+3  
+4  list = ['red','blue','green','yellow','black']
+5  list.append('magenta')
+6  
+7  return list
+\end{verbatim}
+% Emacs 24.5.1 (Org mode 8.2.10)
+\end{document}

@@ -1,0 +1,32 @@
+* Code block one
+  Here we have some code
+#+BEGIN_SRC python -n :results value :exports both
+  x = 15
+  y = 3
+
+  if y < x:
+      x = x + y
+      return x
+#+END_SRC
+
+#+RESULTS:
+: 18
+
+* Code block two
+Down here, we have even more code, but this time we will return an array.
+#+BEGIN_SRC python -n
+  import os
+  import re
+
+  list = ['red','blue','green','yellow','black']
+  list.append('magenta')
+
+  return list
+#+END_SRC
+
+#+RESULTS:
+| blue | green | yellow | black | magenta | red |
+
+
+
+
