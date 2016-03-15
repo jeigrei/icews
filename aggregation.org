@@ -2,13 +2,157 @@
   We are working with the data with the help of python and the *pandas* library.
 
 #+BEGIN_SRC python -n :results value :session icews
-import numpy
-import pandas
+  import numpy
+  import pandas as pd
+  import matplotlib
+  import matplotlib.pyplot as plt
 
-#open tab delimited csv into dataframe
-
+  d = pd.read_csv('events.northkorea.csv',sep='\t')
 #+END_SRC
+
+#+RESULTS:
+  
+* Exploring the data
+
+** Structure
+   ICEWS event data have the following columns:
+
+#+BEGIN_SRC python -n :results value :session icews
+  d.columns
+#+END_SRC
+
+#+RESULTS:
+: Index([u'Event ID', u'Event Date', u'Source Name', u'Source Sectors',
+:        u'Source Country', u'Event Text', u'CAMEO Code', u'Intensity',
+:        u'Target Name', u'Target Sectors', u'Target Country', u'Story ID',
+:        u'Sentence Number', u'Publisher', u'City', u'District', u'Province',
+:        u'Country', u'Latitude', u'Longitude'],
+:       dtype='object')
+
+   A sample of the first five rows:
+#+BEGIN_SRC python -n :results value :session icews
+  d[:5]
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+   Event ID Event Date    Source Name  \
+0    927032     1/5/95  Kim Young Sam   
+1    927031     1/5/95  Kim Young Sam   
+2    927033     1/5/95    North Korea   
+3    927111     1/5/95    Kim Jong-Il   
+4    927112     1/5/95    Kim Jong-Il   
+
+                                      Source Sectors Source Country  \
+0  Executive Office,Government,Executive,Center R...    South Korea   
+1  Executive Office,Government,Executive,Center R...    South Korea   
+2                                                NaN    North Korea   
+3  Parties,(National) Major Party,Government Majo...    North Korea   
+4  Parties,(National) Major Party,Government Majo...    North Korea   
+
+                                      Event Text  CAMEO Code  Intensity  \
+0                      Make an appeal or request          20        3.0   
+1                                 Make statement          10        0.0   
+2                Use conventional military force         190      -10.0   
+3  Express intent to release persons or property         353        7.0   
+4                              Praise or endorse          51        3.4   
+
+                       Target Name  \
+0                      North Korea   
+1                      North Korea   
+2                    Kim Young Sam   
+3  Foreign Affairs (United States)   
+4  Foreign Affairs (United States)   
+
+                                      Target Sectors Target Country  Story ID  \
+0                                                NaN    North Korea  28237624   
+1                                                NaN    North Korea  28237624   
+2  Executive Office,Government,Executive,Center R...    South Korea  28237624   
+3              Government,Foreign Ministry,Executive  United States  28241798   
+4              Government,Foreign Ministry,Executive  United States  28241798   
+
+   Sentence Number                               Publisher   City District  \
+0                2  The Associated Press Political Service  Seoul      NaN   
+1                4  The Associated Press Political Service  Seoul      NaN   
+2                5  The Associated Press Political Service  Seoul      NaN   
+3                1                            Reuters News    NaN      NaN   
+4                1                            Reuters News    NaN      NaN   
+
+            Province        Country  Latitude  Longitude  
+0  Seoul-teukbyeolsi    South Korea   37.5683   126.9780  
+1  Seoul-teukbyeolsi    South Korea   37.5683   126.9780  
+2  Seoul-teukbyeolsi    South Korea   37.5683   126.9780  
+3    Washington D.C.  United States   38.9171   -77.0003  
+4    Washington D.C.  United States   38.9171   -77.0003  
+#+end_example
+
+** Pandas Overview
+   Pandas gives us the following summary
+#+BEGIN_SRC python -n :results value :session icews
+  d.describe()
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+              Event ID     CAMEO Code      Intensity         Story ID  \
+count    286433.000000  286433.000000  286433.000000    286433.000000   
+mean   10275240.188449      64.813681       1.416549  10927330.045347   
+std     5441262.514402     128.880859       3.488927   9951709.156307   
+min      927031.000000      10.000000     -10.000000       423.000000   
+25%     5694209.000000      32.000000       0.000000   3490982.000000   
+50%     9894147.000000      42.000000       1.900000   7897782.000000   
+75%    14458622.000000      50.000000       3.500000  12462448.000000   
+max    21920682.000000    2042.000000      10.000000  37587232.000000   
+
+       Sentence Number       Latitude      Longitude  
+count    286433.000000  286433.000000  286433.000000  
+mean          2.997870      38.066137     105.088327  
+std           1.750866       8.060002      56.505848  
+min           1.000000     -90.000000    -175.200000  
+25%           1.000000      37.568300     120.000000  
+50%           3.000000      39.033900     125.754000  
+75%           4.000000      39.033900     125.754000  
+max           6.000000      70.383300     178.441000  
+#+end_example
+** Source and Target Countries
+   What is the most common source country? Target country?
+#+BEGIN_SRC python -n :results value :session icews
+  d['Source Country'].value_counts()[:6]
+#+END_SRC
+
+#+RESULTS:
+: North Korea           119607
+: United States          43832
+: South Korea            39735
+: Japan                  23486
+: China                  22943
+: Russian Federation     10930
+: Name: Source Country, dtype: int64
+
+#+BEGIN_SRC python -n :results value :session icews
+  d['Target Country'].value_counts()[:6]
+#+END_SRC
+
+#+RESULTS:
+: North Korea           154748
+: United States          32299
+: South Korea            32267
+: China                  19761
+: Japan                  18072
+: Russian Federation      8695
+: Name: Target Country, dtype: int64
+
 * CAMEO Score aggregation
+  We are interested in the events where either the source or the target country is North Korea.
+#+BEGIN_SRC python -n :results value :session icews
+  isSource = d['Source Country'] == 'North Korea'
+  isTarget = d['Target Country'] == 'North Korea'
+
+  nk = d[isSource | isTarget]
+#+END_SRC
+
+#+RESULTS:
+
   We would like to aggregate the CAMEO scores of all data per some time unit into a single 
 new one to give us our time series. The existing literature indentifies four ways to do that.
 ** Goldstein mean

@@ -1,0 +1,88 @@
+% Created 2016-03-14 Mon 19:36
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\date{\today}
+\title{aggregation}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 24.5.1 (Org mode 8.2.10)}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Setup}
+\label{sec-1}
+We are working with the data with the help of python and the \textbf{pandas} library.
+
+\begin{verbatim}
+1  import numpy
+2  import pandas as pd
+3  
+4  d = pd.read_csv('events.northkorea.csv',sep='\t')
+\end{verbatim}
+
+\section{Exploring the data}
+\label{sec-2}
+
+\subsection{Structure}
+\label{sec-2-1}
+ICEWS event data have the following columns:
+
+\begin{verbatim}
+1  d.columns
+\end{verbatim}
+
+A sample of the first five rows:
+\begin{verbatim}
+1  d[:5]
+\end{verbatim}
+
+\subsection{Pandas Overview}
+\label{sec-2-2}
+Pandas gives us the following summary
+\begin{verbatim}
+1  d.describe()
+\end{verbatim}
+
+\subsection{Source and Target Countries}
+\label{sec-2-3}
+What is the most common source country? Target country?
+\begin{verbatim}
+1  d['Source Country'].value_counts()[:6]
+\end{verbatim}
+
+\begin{verbatim}
+1  d['Target Country'].value_counts()[:6].plot(kind='bar')
+\end{verbatim}
+
+\section{CAMEO Score aggregation}
+\label{sec-3}
+  We would like to aggregate the CAMEO scores of all data per some time unit into a single 
+new one to give us our time series. The existing literature indentifies four ways to do that.
+\subsection{Goldstein mean}
+\label{sec-3-1}
+\subsection{Goldstein sum}
+\label{sec-3-2}
+\subsection{Goldstein counts (positive and negative)}
+\label{sec-3-3}
+\subsection{Duvall and Thompson counts}
+\label{sec-3-4}
+% Emacs 24.5.1 (Org mode 8.2.10)
+\end{document}
