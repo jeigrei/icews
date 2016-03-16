@@ -144,6 +144,7 @@ max           6.000000      70.383300     178.441000
 
 * CAMEO Score aggregation
   We are interested in the events where either the source or the target country is North Korea.
+
 #+BEGIN_SRC python -n :results value :session icews
   isSource = d['Source Country'] == 'North Korea'
   isTarget = d['Target Country'] == 'North Korea'
@@ -153,9 +154,24 @@ max           6.000000      70.383300     178.441000
 
 #+RESULTS:
 
-  We would like to aggregate the CAMEO scores of all data per some time unit into a single 
-new one to give us our time series. The existing literature indentifies four ways to do that.
+  We would like to aggregate the CAMEO scores of all data per some time unit (day) into a single 
+new one to give us our time series. The existing literature indentifies four popular ways to do that.
 ** Goldstein mean
+   Using this method, Goldstein scores are averaged per unit time.
 ** Goldstein sum
+   In this method, the Goldstein scores are summed per unit time.
 ** Goldstein counts (positive and negative)
+   Using this method, counts are generated for positive and negative Goldstein scores per unit time. 
+This can be thought of as "net cooperation" and "net conflict."
 ** Duvall and Thompson counts
+   Similar to Goldstein counts, Duvall and Thompson counts categorize events by cooperation or conflict. 
+Duvall and Thompson counts, however, place events into four categories:
+   + Verbal Cooperation: The occurence of dialogue-based meetings, statements that 
+     express a desire to cooperate or appeal for assistance from other actors.
+   + Material Cooperation: Physical acts of collaboration or assistance, including 
+     receiving or sending aid, reducing bans and sentencing, etc.
+   + Verbal Conflict: A spoken criticism, threat, or accusation, often related to 
+     past or future potential acts of material conflict.
+   + Material Conflict: Physical acts of a conflictual nature, including armed 
+     attacks, destruction of property, assassination, etc.
+   
