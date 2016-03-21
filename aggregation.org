@@ -2,22 +2,33 @@
   We are working with the data with the help of python and the *pandas* library.
 
 #+BEGIN_SRC python -n :results value :session icews
-  import numpy
+  import numpy as np
   import pandas as pd
   import matplotlib
+  matplotlib.use('Agg')
   import matplotlib.pyplot as plt
 
   d = pd.read_csv('events.northkorea.csv',sep='\t')
 #+END_SRC
 
 #+RESULTS:
+
+  We are interested in the events where either the source or the target country is North Korea.
+
+#+BEGIN_SRC python -n :results value :session icews
+  isSource = d['Source Country'] == 'North Korea'
+  isTarget = d['Target Country'] == 'North Korea'
+
+  d = d[isSource | isTarget]
+#+END_SRC
+
+#+RESULTS:
   
 * Exploring the data
-
 ** Structure
    ICEWS event data have the following columns:
 
-#+BEGIN_SRC python -n :results value :session icews
+#+BEGIN_SRC python -n :results value :session icews :exports both
   d.columns
 #+END_SRC
 
@@ -30,7 +41,7 @@
 :       dtype='object')
 
    A sample of the first five rows:
-#+BEGIN_SRC python -n :results value :session icews
+#+BEGIN_SRC python -n :results value :session icews :exports both
   d[:5]
 #+END_SRC
 
@@ -88,82 +99,364 @@
 
 ** Pandas Overview
    Pandas gives us the following summary
-#+BEGIN_SRC python -n :results value :session icews
+#+BEGIN_SRC python -n :results value :session icews :exports both
   d.describe()
 #+END_SRC
 
 #+RESULTS:
 #+begin_example
               Event ID     CAMEO Code      Intensity         Story ID  \
-count    286433.000000  286433.000000  286433.000000    286433.000000   
-mean   10275240.188449      64.813681       1.416549  10927330.045347   
-std     5441262.514402     128.880859       3.488927   9951709.156307   
+count    258465.000000  258465.000000  258465.000000    258465.000000   
+mean   10250022.922086      66.694903       1.345124  11028691.885044   
+std     5476433.304771     133.020745       3.508172  10040802.923762   
 min      927031.000000      10.000000     -10.000000       423.000000   
-25%     5694209.000000      32.000000       0.000000   3490982.000000   
-50%     9894147.000000      42.000000       1.900000   7897782.000000   
-75%    14458622.000000      50.000000       3.500000  12462448.000000   
+25%     5655885.000000      33.000000       0.000000   3484897.000000   
+50%     9768434.000000      42.000000       1.900000   7944549.000000   
+75%    14496613.000000      51.000000       3.400000  12585791.000000   
 max    21920682.000000    2042.000000      10.000000  37587232.000000   
 
        Sentence Number       Latitude      Longitude  
-count    286433.000000  286433.000000  286433.000000  
-mean          2.997870      38.066137     105.088327  
-std           1.750866       8.060002      56.505848  
+count    258465.000000  258465.000000  258465.000000  
+mean          2.928973      37.959548     102.849428  
+std           1.747469       8.477567      59.051402  
 min           1.000000     -90.000000    -175.200000  
-25%           1.000000      37.568300     120.000000  
+25%           1.000000      37.568300     116.397000  
 50%           3.000000      39.033900     125.754000  
-75%           4.000000      39.033900     125.754000  
+75%           4.000000      39.033900     125.804000  
 max           6.000000      70.383300     178.441000  
 #+end_example
+
 ** Source and Target Countries
    What is the most common source country? Target country?
-#+BEGIN_SRC python -n :results value :session icews
+#+BEGIN_SRC python -n :results value :session icews :exports both
   d['Source Country'].value_counts()[:6]
 #+END_SRC
 
 #+RESULTS:
 : North Korea           119607
-: United States          43832
-: South Korea            39735
-: Japan                  23486
-: China                  22943
-: Russian Federation     10930
+: United States          37246
+: South Korea            32951
+: China                  19764
+: Japan                  17772
+: Russian Federation      8596
 : Name: Source Country, dtype: int64
 
-#+BEGIN_SRC python -n :results value :session icews
+#+BEGIN_SRC python :results file :session icews
+  fig = plt.figure()
+  fig.add_subplot((d['Source Country'].value_counts()[:6] / d['Source Country'].value_counts()[:3].sum()).plot(kind='bar'))
+  #fig.tight_layout()
+  plt.savefig('sourcecounts.png')
+  'sourcecounts.png'
+#+END_SRC
+
+#+RESULTS:
+[[file:sourcecounts.png]]
+
+[[file:sourcecounts.png]]
+
+#+BEGIN_SRC python -n :results value :session icews :exports both
   d['Target Country'].value_counts()[:6]
 #+END_SRC
 
 #+RESULTS:
 : North Korea           154748
-: United States          32299
-: South Korea            32267
-: China                  19761
-: Japan                  18072
-: Russian Federation      8695
+: United States          26585
+: South Korea            25454
+: China                  16024
+: Japan                  12764
+: Russian Federation      6543
 : Name: Target Country, dtype: int64
 
+   Are there any missing data? Let's check the fill rate.
+
+#+BEGIN_SRC python -n :results value :session icews :exports both
+  d.count(0)/d.shape[0] * 100
+#+END_SRC
+
+#+RESULTS:
+=Event ID           100.000000
+Event Date         100.000000
+Source Name        100.000000
+Source Sectors      50.529472
+Source Country      96.794924
+Event Text         100.000000
+CAMEO Code         100.000000
+Intensity          100.000000
+Target Name        100.000000
+Target Sectors      35.832705
+Target Country      97.828720
+Story ID           100.000000
+Sentence Number    100.000000
+Publisher          100.000000
+City                81.482599
+District             2.539996
+Province            86.423307
+Country            100.000000
+Latitude           100.000000
+Longitude          100.000000
+dtype: float64
+ =   
 * CAMEO Score aggregation
-  We are interested in the events where either the source or the target country is North Korea.
+  We would like to aggregate the CAMEO scores of all data per some unit time into a new variable 
+to generate our time series. The existing literature indentifies four popular ways to do that. 
+Before we do any aggregation across dates, though, we should first change the date strings that we have 
+to numpy datetime objects.
 
-#+BEGIN_SRC python -n :results value :session icews
-  isSource = d['Source Country'] == 'North Korea'
-  isTarget = d['Target Country'] == 'North Korea'
-
-  nk = d[isSource | isTarget]
+#+BEGIN_SRC python -n :results value :session icews :exports both
+  d['Event Date'] = pd.into_datetime(d['Event Date'])
 #+END_SRC
 
 #+RESULTS:
 
-  We would like to aggregate the CAMEO scores of all data per some time unit (day) into a single 
-new one to give us our time series. The existing literature indentifies four popular ways to do that.
-** Goldstein mean
+Now, we'll add a new column for the sign of the intensity value (for the Goldstein counts aggregation)
+and group per day.
+
+#+BEGIN_SRC python -n :results value :session icews :exports both
+  # add a new column to the data describing the sign of the Goldstein score
+  d['IntensitySign'] = np.sign(d.Intensity)
+
+  perDay = d.groupby('Event Date')
+#+END_SRC
+
+#+RESULTS:
+
+
+** DONE Goldstein mean
    Using this method, Goldstein scores are averaged per unit time.
-** Goldstein sum
+
+#+BEGIN_SRC python -n :results value :session icews :exports both
+  gMeans = pd.DataFrame(perDay.Intensity.apply(np.mean))
+  gMeans.columns = ['gMean']
+  gMeans
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+               gMean
+Event Date          
+1995-01-05  0.680000
+1995-01-11  0.000000
+1995-01-14  0.750000
+1995-01-21 -5.000000
+1995-01-24  6.500000
+1995-01-25  0.400000
+1995-01-30  2.350000
+1995-02-03  3.000000
+1995-02-08  7.000000
+1995-02-09 -1.150000
+1995-02-15  4.500000
+1995-02-17 -0.200000
+1995-03-02  0.000000
+1995-03-04 -2.000000
+1995-03-20  2.350000
+1995-03-30  4.000000
+1995-04-03  8.000000
+1995-04-12  4.666667
+1995-04-19  3.000000
+1995-04-21  1.444444
+1995-04-23  7.000000
+1995-04-24 -5.000000
+1995-04-26  1.833333
+1995-04-27 -5.000000
+1995-05-02  4.000000
+1995-05-11  2.250000
+1995-05-12 -1.666667
+1995-05-13 -4.000000
+1995-05-15  4.000000
+1995-05-16  1.000000
+...              ...
+2014-09-01  1.866667
+2014-09-02  2.356140
+2014-09-03  1.719355
+2014-09-04  2.281818
+2014-09-05  1.638462
+2014-09-06  2.407692
+2014-09-07 -0.446667
+2014-09-08 -3.808696
+2014-09-09  2.682353
+2014-09-10  0.569231
+2014-09-11  2.117391
+2014-09-12 -1.900000
+2014-09-13 -1.108333
+2014-09-14 -1.988000
+2014-09-15 -2.186957
+2014-09-16  1.664286
+2014-09-17  0.652000
+2014-09-18 -0.640000
+2014-09-19  0.423529
+2014-09-20 -2.714286
+2014-09-21  0.130769
+2014-09-22  2.263158
+2014-09-23 -0.493103
+2014-09-24  0.603226
+2014-09-25  1.154839
+2014-09-26  1.388889
+2014-09-27  1.288679
+2014-09-28  0.409756
+2014-09-29  0.485526
+2014-09-30  0.290476
+
+[6808 rows x 1 columns]
+#+end_example
+
+** DONE Goldstein sum
    In this method, the Goldstein scores are summed per unit time.
-** Goldstein counts (positive and negative)
+
+#+BEGIN_SRC python -n :results value :session icews :exports both
+  gSums = pd.DataFrame(perDay.Intensity.apply(np.sum))
+  gSums.columns = ['gSum']
+  gSums
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+             gSum
+Event Date       
+1995-01-05    3.4
+1995-01-11    0.0
+1995-01-14    1.5
+1995-01-21   -5.0
+1995-01-24   19.5
+1995-01-25    0.4
+1995-01-30    4.7
+1995-02-03    3.0
+1995-02-08   14.0
+1995-02-09   -4.6
+1995-02-15    9.0
+1995-02-17   -0.6
+1995-03-02    0.0
+1995-03-04   -2.0
+1995-03-20    4.7
+1995-03-30    8.0
+1995-04-03   16.0
+1995-04-12   14.0
+1995-04-19    3.0
+1995-04-21   13.0
+1995-04-23   14.0
+1995-04-24   -5.0
+1995-04-26    5.5
+1995-04-27  -10.0
+1995-05-02    4.0
+1995-05-11    9.0
+1995-05-12   -5.0
+1995-05-13   -4.0
+1995-05-15   24.0
+1995-05-16    7.0
+...           ...
+2014-09-01  112.0
+2014-09-02  134.3
+2014-09-03   53.3
+2014-09-04   25.1
+2014-09-05   21.3
+2014-09-06  125.2
+2014-09-07  -13.4
+2014-09-08  -87.6
+2014-09-09   45.6
+2014-09-10   14.8
+2014-09-11   48.7
+2014-09-12  -13.3
+2014-09-13  -13.3
+2014-09-14  -99.4
+2014-09-15  -50.3
+2014-09-16   46.6
+2014-09-17   16.3
+2014-09-18   -6.4
+2014-09-19   14.4
+2014-09-20  -19.0
+2014-09-21    1.7
+2014-09-22   86.0
+2014-09-23  -14.3
+2014-09-24   18.7
+2014-09-25   35.8
+2014-09-26   37.5
+2014-09-27   68.3
+2014-09-28   16.8
+2014-09-29   36.9
+2014-09-30   18.3
+
+[6808 rows x 1 columns]
+#+end_example
+
+** DONE Goldstein counts (positive and negative)
    Using this method, counts are generated for positive and negative Goldstein scores per unit time. 
 This can be thought of as "net cooperation" and "net conflict."
-** Duvall and Thompson counts
+
+#+BEGIN_SRC python -n :results value :session icews :exports both
+  gCounts = perDay.IntensitySign.value_counts().unstack().fillna(0)
+  gCounts.columns = ['gCount Negative','gCount Zero','gCount Positive']
+  gCounts
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+            gCount Negative  gCount Zero  gCount Positive
+Event Date                                               
+1995-01-05                1            1                3
+1995-01-11                0            1                0
+1995-01-14                1            0                1
+1995-01-21                1            0                0
+1995-01-24                0            0                3
+1995-01-25                0            0                1
+1995-01-30                0            0                2
+1995-02-03                0            0                1
+1995-02-08                0            0                2
+1995-02-09                2            0                2
+1995-02-15                0            0                2
+1995-02-17                1            1                1
+1995-03-02                0            2                0
+1995-03-04                1            0                0
+1995-03-20                0            0                2
+1995-03-30                0            0                2
+1995-04-03                0            0                2
+1995-04-12                0            1                2
+1995-04-19                0            0                1
+1995-04-21                2            0                7
+1995-04-23                0            0                2
+1995-04-24                1            0                0
+1995-04-26                0            0                3
+1995-04-27                2            0                0
+1995-05-02                0            0                1
+1995-05-11                1            1                2
+1995-05-12                2            0                1
+1995-05-13                1            0                0
+1995-05-15                0            0                6
+1995-05-16                2            0                5
+...                     ...          ...              ...
+2014-09-01               10            1               49
+2014-09-02                6            0               51
+2014-09-03                2            3               26
+2014-09-04                2            1                8
+2014-09-05                2            1               10
+2014-09-06                5            1               46
+2014-09-07               12            1               17
+2014-09-08               16            2                5
+2014-09-09                0            2               15
+2014-09-10                3            9               14
+2014-09-11                1            1               21
+2014-09-12                5            1                1
+2014-09-13                7            0                5
+2014-09-14               31            3               16
+2014-09-15               14            3                6
+2014-09-16                5            0               23
+2014-09-17                6            5               14
+2014-09-18                5            1                4
+2014-09-19                5           16               13
+2014-09-20                5            0                2
+2014-09-21                4            3                6
+2014-09-22                2            2               34
+2014-09-23               12            1               16
+2014-09-24               12            2               17
+2014-09-25                9            4               18
+2014-09-26                4            5               18
+2014-09-27               12            3               38
+2014-09-28               13            1               27
+2014-09-29               27            9               40
+2014-09-30               13            8               42
+
+[6808 rows x 3 columns]
+#+end_example
+
+** TODO Duvall and Thompson counts
    Similar to Goldstein counts, Duvall and Thompson counts categorize events by cooperation or conflict. 
 Duvall and Thompson counts, however, place events into four categories:
    + Verbal Cooperation: The occurence of dialogue-based meetings, statements that 
@@ -174,4 +467,3 @@ Duvall and Thompson counts, however, place events into four categories:
      past or future potential acts of material conflict.
    + Material Conflict: Physical acts of a conflictual nature, including armed 
      attacks, destruction of property, assassination, etc.
-   
