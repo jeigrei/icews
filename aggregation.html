@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>aggregation</title>
+<!-- 2016-03-17 Thu 00:30 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">aggregation</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Setup</a></li>
+<li><a href="#sec-2">2. Exploring the data</a>
+<ul>
+<li><a href="#sec-2-1">2.1. Structure</a></li>
+<li><a href="#sec-2-2">2.2. Pandas Overview</a></li>
+<li><a href="#sec-2-3">2.3. Source and Target Countries</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3. CAMEO Score aggregation</a>
+<ul>
+<li><a href="#sec-3-1">3.1. Goldstein mean</a></li>
+<li><a href="#sec-3-2">3.2. Goldstein sum</a></li>
+<li><a href="#sec-3-3">3.3. Goldstein counts (positive and negative)</a></li>
+<li><a href="#sec-3-4">3.4. Duvall and Thompson counts</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Setup</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+We are working with the data with the help of python and the <b>pandas</b> library.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>import numpy
+<span class="linenr">2: </span>import pandas as pd
+<span class="linenr">3: </span>import matplotlib
+<span class="linenr">4: </span>matplotlib.use('Agg')
+<span class="linenr">5: </span>import matplotlib.pyplot as plt
+<span class="linenr">6: </span>
+<span class="linenr">7: </span>d = pd.read_csv('events.northkorea.csv',sep='\t')
+</pre>
+</div>
+
+<p>
+We are interested in the events where either the source or the target country is North Korea.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>isSource = d['Source Country'] == 'North Korea'
+<span class="linenr">2: </span>isTarget = d['Target Country'] == 'North Korea'
+<span class="linenr">3: </span>
+<span class="linenr">4: </span>d = d[isSource | isTarget]
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Exploring the data</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Structure</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+ICEWS event data have the following columns:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>d.columns
+</pre>
+</div>
+
+<pre class="example">
+Index([u'Event ID', u'Event Date', u'Source Name', u'Source Sectors',
+       u'Source Country', u'Event Text', u'CAMEO Code', u'Intensity',
+       u'Target Name', u'Target Sectors', u'Target Country', u'Story ID',
+       u'Sentence Number', u'Publisher', u'City', u'District', u'Province',
+       u'Country', u'Latitude', u'Longitude'],
+      dtype='object')
+</pre>
+
+<p>
+A sample of the first five rows:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>d[:5]
+</pre>
+</div>
+
+<pre class="example">
+   Event ID Event Date    Source Name  \
+0    927032     1/5/95  Kim Young Sam   
+1    927031     1/5/95  Kim Young Sam   
+2    927033     1/5/95    North Korea   
+3    927111     1/5/95    Kim Jong-Il   
+4    927112     1/5/95    Kim Jong-Il   
+
+                                      Source Sectors Source Country  \
+0  Executive Office,Government,Executive,Center R...    South Korea   
+1  Executive Office,Government,Executive,Center R...    South Korea   
+2                                                NaN    North Korea   
+3  Parties,(National) Major Party,Government Majo...    North Korea   
+4  Parties,(National) Major Party,Government Majo...    North Korea   
+
+                                      Event Text  CAMEO Code  Intensity  \
+0                      Make an appeal or request          20        3.0   
+1                                 Make statement          10        0.0   
+2                Use conventional military force         190      -10.0   
+3  Express intent to release persons or property         353        7.0   
+4                              Praise or endorse          51        3.4   
+
+                       Target Name  \
+0                      North Korea   
+1                      North Korea   
+2                    Kim Young Sam   
+3  Foreign Affairs (United States)   
+4  Foreign Affairs (United States)   
+
+                                      Target Sectors Target Country  Story ID  \
+0                                                NaN    North Korea  28237624   
+1                                                NaN    North Korea  28237624   
+2  Executive Office,Government,Executive,Center R...    South Korea  28237624   
+3              Government,Foreign Ministry,Executive  United States  28241798   
+4              Government,Foreign Ministry,Executive  United States  28241798   
+
+   Sentence Number                               Publisher   City District  \
+0                2  The Associated Press Political Service  Seoul      NaN   
+1                4  The Associated Press Political Service  Seoul      NaN   
+2                5  The Associated Press Political Service  Seoul      NaN   
+3                1                            Reuters News    NaN      NaN   
+4                1                            Reuters News    NaN      NaN   
+
+            Province        Country  Latitude  Longitude  
+0  Seoul-teukbyeolsi    South Korea   37.5683   126.9780  
+1  Seoul-teukbyeolsi    South Korea   37.5683   126.9780  
+2  Seoul-teukbyeolsi    South Korea   37.5683   126.9780  
+3    Washington D.C.  United States   38.9171   -77.0003  
+4    Washington D.C.  United States   38.9171   -77.0003
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Pandas Overview</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+Pandas gives us the following summary
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>d.describe()
+</pre>
+</div>
+
+<pre class="example">
+              Event ID     CAMEO Code      Intensity         Story ID  \
+count    258465.000000  258465.000000  258465.000000    258465.000000   
+mean   10250022.922086      66.694903       1.345124  11028691.885044   
+std     5476433.304771     133.020745       3.508172  10040802.923762   
+min      927031.000000      10.000000     -10.000000       423.000000   
+25%     5655885.000000      33.000000       0.000000   3484897.000000   
+50%     9768434.000000      42.000000       1.900000   7944549.000000   
+75%    14496613.000000      51.000000       3.400000  12585791.000000   
+max    21920682.000000    2042.000000      10.000000  37587232.000000   
+
+       Sentence Number       Latitude      Longitude  
+count    258465.000000  258465.000000  258465.000000  
+mean          2.928973      37.959548     102.849428  
+std           1.747469       8.477567      59.051402  
+min           1.000000     -90.000000    -175.200000  
+25%           1.000000      37.568300     116.397000  
+50%           3.000000      39.033900     125.754000  
+75%           4.000000      39.033900     125.804000  
+max           6.000000      70.383300     178.441000
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Source and Target Countries</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+What is the most common source country? Target country?
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>d['Source Country'].value_counts()[:6]
+</pre>
+</div>
+
+<pre class="example">
+North Korea           119607
+United States          37246
+South Korea            32951
+China                  19764
+Japan                  17772
+Russian Federation      8596
+Name: Source Country, dtype: int64
+</pre>
+
+<div class="org-src-container">
+
+<pre class="src src-python">fig = plt.figure()
+fig.add_subplot((d['Source Country'].value_counts()[:6] / d['Source Country'].value_counts()[:3].sum()).plot(kind='bar'))
+#fig.tight_layout()
+plt.savefig('sourcecounts.png')
+'sourcecounts.png'
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="sourcecounts.png" alt="sourcecounts.png" />
+</p>
+</div>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>d['Target Country'].value_counts()[:6]
+</pre>
+</div>
+
+<pre class="example">
+North Korea           154748
+United States          26585
+South Korea            25454
+China                  16024
+Japan                  12764
+Russian Federation      6543
+Name: Target Country, dtype: int64
+</pre>
+
+<p>
+Are there any missing data? Let's check the fill rate.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>d.count(0)/d.shape[0] * 100
+</pre>
+</div>
+
+<pre class="example">
+Event ID           100.000000
+Event Date         100.000000
+Source Name        100.000000
+Source Sectors      50.529472
+Source Country      96.794924
+Event Text         100.000000
+CAMEO Code         100.000000
+Intensity          100.000000
+Target Name        100.000000
+Target Sectors      35.832705
+Target Country      97.828720
+Story ID           100.000000
+Sentence Number    100.000000
+Publisher          100.000000
+City                81.482599
+District             2.539996
+Province            86.423307
+Country            100.000000
+Latitude           100.000000
+Longitude          100.000000
+dtype: float64
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> CAMEO Score aggregation</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+  We would like to aggregate the CAMEO scores of all data per some time unit (day) into a single 
+new one to give us our time series. The existing literature indentifies four popular ways to do that. 
+Before we do any aggregation across dates, though, we should first change the date strings that we have 
+to numpy datetime objects.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>#d['Event Date'] = pd.to_datetime(d['Event Date'])
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Goldstein mean</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+Using this method, Goldstein scores are averaged per unit time.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Goldstein sum</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+In this method, the Goldstein scores are summed per unit time.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> Goldstein counts (positive and negative)</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+   Using this method, counts are generated for positive and negative Goldstein scores per unit time. 
+This can be thought of as "net cooperation" and "net conflict."
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3-4" class="outline-3">
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> Duvall and Thompson counts</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+   Similar to Goldstein counts, Duvall and Thompson counts categorize events by cooperation or conflict. 
+Duvall and Thompson counts, however, place events into four categories:
+</p>
+<ul class="org-ul">
+<li>Verbal Cooperation: The occurence of dialogue-based meetings, statements that 
+express a desire to cooperate or appeal for assistance from other actors.
+</li>
+<li>Material Cooperation: Physical acts of collaboration or assistance, including 
+receiving or sending aid, reducing bans and sentencing, etc.
+</li>
+<li>Verbal Conflict: A spoken criticism, threat, or accusation, often related to 
+past or future potential acts of material conflict.
+</li>
+<li>Material Conflict: Physical acts of a conflictual nature, including armed 
+attacks, destruction of property, assassination, etc.
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Created: 2016-03-17 Thu 00:30</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
