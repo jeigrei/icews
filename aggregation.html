@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>aggregation</title>
-<!-- 2016-03-17 Thu 00:30 -->
+<!-- 2016-03-23 Wed 13:32 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <style type="text/css">
@@ -151,10 +151,10 @@ for the JavaScript code in this tag.
 </li>
 <li><a href="#sec-3">3. CAMEO Score aggregation</a>
 <ul>
-<li><a href="#sec-3-1">3.1. Goldstein mean</a></li>
-<li><a href="#sec-3-2">3.2. Goldstein sum</a></li>
-<li><a href="#sec-3-3">3.3. Goldstein counts (positive and negative)</a></li>
-<li><a href="#sec-3-4">3.4. Duvall and Thompson counts</a></li>
+<li><a href="#sec-3-1">3.1. <span class="done DONE">DONE</span> Goldstein mean</a></li>
+<li><a href="#sec-3-2">3.2. <span class="done DONE">DONE</span> Goldstein sum</a></li>
+<li><a href="#sec-3-3">3.3. <span class="done DONE">DONE</span> Goldstein counts (positive and negative)</a></li>
+<li><a href="#sec-3-4">3.4. <span class="todo TODO">TODO</span> Duvall and Thompson counts</a></li>
 </ul>
 </li>
 </ul>
@@ -169,7 +169,7 @@ We are working with the data with the help of python and the <b>pandas</b> libra
 
 <div class="org-src-container">
 
-<pre class="src src-python"><span class="linenr">1: </span>import numpy
+<pre class="src src-python"><span class="linenr">1: </span>import numpy as np
 <span class="linenr">2: </span>import pandas as pd
 <span class="linenr">3: </span>import matplotlib
 <span class="linenr">4: </span>matplotlib.use('Agg')
@@ -371,6 +371,16 @@ Russian Federation      6543
 Name: Target Country, dtype: int64
 </pre>
 
+<div class="org-src-container">
+
+<pre class="src src-python">fig = plt.figure()
+fig.add_subplot((d['Target Country'].value_counts()[:6] / d['Target Country'].value_counts()[:3].sum()).plot(kind='bar'))
+#fig.tight_layout()
+plt.savefig('targetcounts.png')
+'targetcounts.png'
+</pre>
+</div>
+
 <p>
 Are there any missing data? Let's check the fill rate.
 </p>
@@ -408,52 +418,163 @@ dtype: float64
 </div>
 </div>
 
+
 <div id="outline-container-sec-3" class="outline-2">
 <h2 id="sec-3"><span class="section-number-2">3</span> CAMEO Score aggregation</h2>
 <div class="outline-text-2" id="text-3">
 <p>
-  We would like to aggregate the CAMEO scores of all data per some time unit (day) into a single 
-new one to give us our time series. The existing literature indentifies four popular ways to do that. 
+  We would like to aggregate the CAMEO scores of all data per some unit time into a new variable 
+to generate our time series. The existing literature indentifies four popular ways to do that. 
 Before we do any aggregation across dates, though, we should first change the date strings that we have 
 to numpy datetime objects.
 </p>
 
 <div class="org-src-container">
 
-<pre class="src src-python"><span class="linenr">1: </span>#d['Event Date'] = pd.to_datetime(d['Event Date'])
+<pre class="src src-python"><span class="linenr">1: </span>d['Event Date'] = pd.to_datetime(d['Event Date'])
+</pre>
+</div>
+
+<p>
+Now, we'll add a new column for the sign of the intensity value (for the Goldstein counts aggregation)
+and group per day.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span># add a new column to the data describing the sign of the Goldstein score
+<span class="linenr">2: </span>d['IntensitySign'] = np.sign(d.Intensity)
+<span class="linenr">3: </span>
+<span class="linenr">4: </span>perDay = d.groupby('Event Date')
 </pre>
 </div>
 </div>
 
 
 <div id="outline-container-sec-3-1" class="outline-3">
-<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Goldstein mean</h3>
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> <span class="done DONE">DONE</span> Goldstein mean</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 Using this method, Goldstein scores are averaged per unit time.
 </p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>gMeans = pd.DataFrame(perDay.Intensity.apply(np.mean))
+<span class="linenr">2: </span>gMeans.columns = ['gMean']
+</pre>
+</div>
+
+<p>
+Plotted:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>plt.figure()
+<span class="linenr">2: </span>gMeans.plot()
+<span class="linenr">3: </span>plt.savefig('gmeans.png')
+<span class="linenr">4: </span>'gmeans.png'
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="gmeans.png" alt="gmeans.png" />
+</p>
+</div>
 </div>
 </div>
 
 <div id="outline-container-sec-3-2" class="outline-3">
-<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Goldstein sum</h3>
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> <span class="done DONE">DONE</span> Goldstein sum</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
 In this method, the Goldstein scores are summed per unit time.
 </p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>gSums = pd.DataFrame(perDay.Intensity.apply(np.sum))
+<span class="linenr">2: </span>gSums.columns = ['gSum']
+</pre>
+</div>
+
+<p>
+Plotted:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>plt.figure()
+<span class="linenr">2: </span>gSums.plot()
+<span class="linenr">3: </span>plt.savefig('gsums.png')
+<span class="linenr">4: </span>'gsums.png'
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="gsums.png" alt="gsums.png" />
+</p>
+</div>
+
+<p>
+Why are the sums so high after 2001? Maybe because there are more news stories to generate more events?
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>plt.figure()
+<span class="linenr">2: </span>perDay['Event ID'].describe().unstack()['count'].plot()
+<span class="linenr">3: </span>plt.savefig('numevents.png')
+<span class="linenr">4: </span>'numevents.png'
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="numevents.png" alt="numevents.png" />
+</p>
 </div>
 </div>
+</div>
+
 <div id="outline-container-sec-3-3" class="outline-3">
-<h3 id="sec-3-3"><span class="section-number-3">3.3</span> Goldstein counts (positive and negative)</h3>
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> <span class="done DONE">DONE</span> Goldstein counts (positive and negative)</h3>
 <div class="outline-text-3" id="text-3-3">
 <p>
    Using this method, counts are generated for positive and negative Goldstein scores per unit time. 
 This can be thought of as "net cooperation" and "net conflict."
 </p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>gCounts = perDay.IntensitySign.value_counts().unstack().fillna(0)
+<span class="linenr">2: </span>gCounts.columns = ['gCount Negative','gCount Zero','gCount Positive']
+</pre>
+</div>
+
+<p>
+Plotted:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>plt.figure()
+<span class="linenr">2: </span>gCounts.plot()
+<span class="linenr">3: </span>plt.savefig('gcounts.png')
+<span class="linenr">4: </span>'gcounts.png'
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="gcounts.png" alt="gcounts.png" />
+</p>
 </div>
 </div>
+</div>
+
 <div id="outline-container-sec-3-4" class="outline-3">
-<h3 id="sec-3-4"><span class="section-number-3">3.4</span> Duvall and Thompson counts</h3>
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> <span class="todo TODO">TODO</span> Duvall and Thompson counts</h3>
 <div class="outline-text-3" id="text-3-4">
 <p>
    Similar to Goldstein counts, Duvall and Thompson counts categorize events by cooperation or conflict. 
@@ -478,7 +599,7 @@ attacks, destruction of property, assassination, etc.
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Created: 2016-03-17 Thu 00:30</p>
+<p class="date">Created: 2016-03-23 Wed 13:32</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
