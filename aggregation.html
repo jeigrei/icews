@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>aggregation</title>
-<!-- 2016-03-23 Wed 13:32 -->
+<!-- 2016-03-25 Fri 12:53 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <style type="text/css">
@@ -174,8 +174,9 @@ We are working with the data with the help of python and the <b>pandas</b> libra
 <span class="linenr">3: </span>import matplotlib
 <span class="linenr">4: </span>matplotlib.use('Agg')
 <span class="linenr">5: </span>import matplotlib.pyplot as plt
-<span class="linenr">6: </span>
-<span class="linenr">7: </span>d = pd.read_csv('events.northkorea.csv',sep='\t')
+<span class="linenr">6: </span>import seaborn as sns; sns.plot(color_codes=True)
+<span class="linenr">7: </span>
+<span class="linenr">8: </span>d = pd.read_csv('events.northkorea.csv',sep='\t')
 </pre>
 </div>
 
@@ -391,8 +392,8 @@ Are there any missing data? Let's check the fill rate.
 </pre>
 </div>
 
-<pre class="example">
-Event ID           100.000000
+<p>
+=Event ID           100.000000
 Event Date         100.000000
 Source Name        100.000000
 Source Sectors      50.529472
@@ -413,12 +414,32 @@ Country            100.000000
 Latitude           100.000000
 Longitude          100.000000
 dtype: float64
-</pre>
+==Event ID           100.000000
+Event Date         100.000000
+Source Name        100.000000
+Source Sectors      50.529472
+Source Country      96.794924
+Event Text         100.000000
+CAMEO Code         100.000000
+Intensity          100.000000
+Target Name        100.000000
+Target Sectors      35.832705
+Target Country      97.828720
+Story ID           100.000000
+Sentence Number    100.000000
+Publisher          100.000000
+City                81.482599
+District             2.539996
+Province            86.423307
+Country            100.000000
+Latitude           100.000000
+Longitude          100.000000
+dtype: float64
+=   
+</p>
 </div>
 </div>
 </div>
-
-
 <div id="outline-container-sec-3" class="outline-2">
 <h2 id="sec-3"><span class="section-number-2">3</span> CAMEO Score aggregation</h2>
 <div class="outline-text-2" id="text-3">
@@ -570,6 +591,80 @@ Plotted:
 <p><img src="gcounts.png" alt="gcounts.png" />
 </p>
 </div>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span class="linenr">1: </span>gSums.sort('gSum')
+</pre>
+</div>
+
+<pre class="example">
+              gSum
+Event Date        
+2010-11-24 -2064.5
+2010-11-23 -1625.6
+2010-11-29  -977.5
+2010-11-25  -828.1
+2010-11-26  -609.6
+2010-11-28  -549.3
+2006-10-09  -469.5
+2006-10-11  -447.5
+2006-09-19  -437.0
+2010-11-30  -414.3
+2006-10-16  -410.9
+2006-10-17  -401.8
+2008-07-11  -345.8
+2013-03-07  -329.6
+2006-10-15  -326.8
+2006-10-10  -319.9
+2010-12-03  -313.4
+2010-11-27  -293.5
+2013-03-08  -280.3
+2009-06-08  -275.8
+2010-12-06  -272.6
+2010-12-08  -269.8
+2009-03-19  -263.2
+2004-10-27  -261.0
+2013-02-12  -260.0
+2009-04-14  -259.3
+2010-05-25  -247.3
+2006-07-16  -247.1
+2006-07-05  -244.8
+2014-06-06  -231.2
+...            ...
+2002-07-31   659.2
+2007-07-03   667.0
+2000-10-12   671.6
+2000-07-19   678.3
+2001-08-04   689.2
+2000-06-01   712.3
+2000-10-25   713.0
+2009-08-05   714.3
+2007-10-02   755.6
+2000-06-16   785.2
+2002-09-14   787.5
+2010-05-07   831.6
+2007-06-21   871.6
+2000-06-13   880.3
+2007-08-08   914.0
+2007-10-05   922.0
+2000-06-15   946.3
+2000-10-24   951.3
+2000-10-23   998.8
+2006-01-18  1029.4
+2002-09-18  1035.5
+2009-08-04  1053.3
+2004-04-21  1066.4
+2000-06-14  1158.2
+2002-08-30  1240.0
+2007-06-22  1345.1
+2004-05-22  1545.4
+2002-09-17  1643.1
+2007-10-03  1680.2
+2007-10-04  2286.2
+
+[6808 rows x 1 columns]
+</pre>
 </div>
 </div>
 
@@ -599,7 +694,7 @@ attacks, destruction of property, assassination, etc.
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Created: 2016-03-23 Wed 13:32</p>
+<p class="date">Created: 2016-03-25 Fri 12:53</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
